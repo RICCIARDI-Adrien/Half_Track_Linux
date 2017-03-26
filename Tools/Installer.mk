@@ -4,7 +4,7 @@
 INSTALLER_PATH_ROOTFS = $(HELPERS_PATH_BUILD)/Installer_Rootfs
 
 # This makefile entry point
-installer: installer_rootfs_create_directories installer_syslinux installer_linux
+installer: installer_rootfs_create_directories installer_syslinux installer_linux installer_create_iso_image
 
 # Populate a minimal rootfs just enough to allow following package binaries to be copied on it
 installer_rootfs_create_directories:
@@ -34,4 +34,8 @@ installer_linux:
 	cp $(HELPERS_PATH_RESOURCES)/Installer_$(VERSION_LINUX)_config $(HELPERS_PATH_BUILD)/Installer_Linux/.config
 	@# Build the kernel
 	cd $(HELPERS_PATH_BUILD)/Installer_Linux && make -j $(HELPERS_PROCESSORS_COUNT)
+	@# Copy kernel image to rootfs
+	cp $(HELPERS_PATH_BUILD)/Installer_Linux/arch/x86/boot/bzImage $(INSTALLER_PATH_ROOTFS)/vmlinux
 
+installer_create_iso_image:
+	mkisofs -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o Half_Track_Linux.iso $(INSTALLER_PATH_ROOTFS)
