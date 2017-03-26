@@ -13,6 +13,9 @@ installer_rootfs_create_directories:
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/proc
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/usr/bin
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/sys
+	
+	@# Populate rootfs with static files
+	cp -r $(HELPERS_PATH_RESOURCES)/Installer_Rootfs/* $(INSTALLER_PATH_ROOTFS)
 
 installer_syslinux:
 	$(call HelpersDisplayMessage,[Installer] SYSLINUX (ISOLINUX CDROM bootloader))
@@ -22,7 +25,6 @@ installer_syslinux:
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/isolinux
 	cp $(HELPERS_PATH_BUILD)/Installer_Syslinux/bios/core/isolinux.bin $(INSTALLER_PATH_ROOTFS)/isolinux
 	cp $(HELPERS_PATH_BUILD)/Installer_Syslinux/bios/com32/elflink/ldlinux/ldlinux.c32 $(INSTALLER_PATH_ROOTFS)/isolinux
-	cp $(HELPERS_PATH_RESOURCES)/Installer_isolinux.cfg $(INSTALLER_PATH_ROOTFS)/isolinux/isolinux.cfg
 
 installer_linux:
 	$(call HelpersDisplayMessage,[Installer] Linux (kernel))
