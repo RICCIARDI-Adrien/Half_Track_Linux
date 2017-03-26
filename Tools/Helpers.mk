@@ -40,5 +40,3 @@ define HelpersPrepareFile
 		tar -xf "$(HELPERS_PATH_DOWNLOADS)/$(Archive_File_Name)" -C "$(HELPERS_PATH_BUILD)/$(Uncompressed_Directory_Name)" --strip 1; \
 	fi
 endef
-
-#tar -xf "$(HELPERS_PATH_DOWNLOADS)/$(Archive_File_Name)" -C "$(HELPERS_PATH_BUILD)"; \

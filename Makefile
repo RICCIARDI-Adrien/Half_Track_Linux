@@ -1,7 +1,7 @@
 include Tools/Helpers.mk
 
 VERSION_LINUX = linux-4.10.5
-
+VERSION_SYSLINUX = syslinux-6.03
 
 #all: linux installer
 all: prepare_build_environment installer
