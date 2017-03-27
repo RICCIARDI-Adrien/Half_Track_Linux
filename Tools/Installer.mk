@@ -15,6 +15,22 @@ installer_prepare_rootfs:
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/usr/bin
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/sys
 	
+	@# Create useful device nodes
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/console ]; then sudo mknod -m 600 $(INSTALLER_PATH_ROOTFS)/dev/console c 5 1; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/null ]; then sudo mknod -m 666 $(INSTALLER_PATH_ROOTFS)/dev/null c 1 3; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/random ]; then sudo mknod -m 666 $(INSTALLER_PATH_ROOTFS)/dev/random c 1 8; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/tty ]; then sudo mknod -m 666 $(INSTALLER_PATH_ROOTFS)/dev/tty c 5 0; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/tty0 ]; then sudo mknod $(INSTALLER_PATH_ROOTFS)/dev/tty0 c 4 0; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/tty1 ]; then sudo mknod $(INSTALLER_PATH_ROOTFS)/dev/tty1 c 4 1; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/tty2 ]; then sudo mknod $(INSTALLER_PATH_ROOTFS)/dev/tty2 c 4 2; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/tty3 ]; then sudo mknod $(INSTALLER_PATH_ROOTFS)/dev/tty3 c 4 3; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/tty4 ]; then sudo mknod $(INSTALLER_PATH_ROOTFS)/dev/tty4 c 4 4; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/tty5 ]; then sudo mknod $(INSTALLER_PATH_ROOTFS)/dev/tty5 c 4 5; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/tty6 ]; then sudo mknod $(INSTALLER_PATH_ROOTFS)/dev/tty6 c 4 6; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/tty7 ]; then sudo mknod $(INSTALLER_PATH_ROOTFS)/dev/tty7 c 4 7; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/urandom ]; then sudo mknod -m 666 $(INSTALLER_PATH_ROOTFS)/dev/urandom c 1 9; fi
+	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/zero ]; then sudo mknod -m 666 $(INSTALLER_PATH_ROOTFS)/dev/zero c 1 5; fi
+	
 	@# Populate rootfs with static files
 	#cp -r $(HELPERS_PATH_RESOURCES)/Installer_Rootfs/* $(INSTALLER_PATH_ROOTFS)
 
