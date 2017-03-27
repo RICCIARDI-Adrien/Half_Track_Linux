@@ -1,11 +1,13 @@
 include Tools/Helpers.mk
 
+VERSION_BUSYBOX = busybox-1.26.2
 VERSION_LINUX = linux-4.10.5
 VERSION_SYSLINUX = syslinux-6.03
 
 #all: linux installer
 all: prepare_build_environment installer
 
+# Include installer rules after the "all" rule to make "all" the default rule
 include Tools/Installer.mk
 
 # Set up all needed directories

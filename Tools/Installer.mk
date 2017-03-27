@@ -5,7 +5,7 @@ INSTALLER_PATH_ISO_IMAGE = $(HELPERS_PATH_BUILD)/Installer_ISO_Image
 INSTALLER_PATH_ROOTFS = $(HELPERS_PATH_BUILD)/Installer_Rootfs
 
 # This makefile entry point
-installer: installer_prepare_rootfs installer_prepare_iso_image installer_syslinux installer_linux installer_create_iso_image
+installer: installer_prepare_rootfs installer_busybox installer_prepare_iso_image installer_syslinux installer_linux installer_create_iso_image
 
 # Populate a minimal rootfs just enough to allow following package binaries to be copied on it
 installer_prepare_rootfs:
@@ -17,6 +17,13 @@ installer_prepare_rootfs:
 	
 	@# Populate rootfs with static files
 	#cp -r $(HELPERS_PATH_RESOURCES)/Installer_Rootfs/* $(INSTALLER_PATH_ROOTFS)
+
+installer_busybox:
+	$(call HelpersDisplayMessage,[Installer] Busybox (base system and utilities))
+	$(call HelpersPrepareFile,https://www.busybox.net/downloads/$(VERSION_BUSYBOX).tar.bz2,Installer_Busybox)
+	
+	cp $(HELPERS_PATH_RESOURCES)/Installer_$(VERSION_BUSYBOX)_config $(HELPERS_PATH_BUILD)/Installer_Busybox/.config
+	cd $(HELPERS_PATH_BUILD)/Installer_Busybox && make -j $(HELPERS_PROCESSORS_COUNT) && make install
 
 installer_prepare_iso_image:
 	mkdir -p $(INSTALLER_PATH_ISO_IMAGE)
