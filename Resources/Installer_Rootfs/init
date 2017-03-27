@@ -4,8 +4,12 @@
 mount -t proc proc /proc
 mount -t sysfs sys /sys
 
+# Start system installation
+Install_System.sh
+
 # Avoid killing init
 while true
 do
+	# Start a shell if something went wrong
 	sh
 done
