@@ -8,14 +8,14 @@ HELPERS_PATH_DOWNLOADS = $(HELPERS_PATH_ROOT)/Downloads
 HELPERS_PATH_RESOURCES = $(HELPERS_PATH_ROOT)/Resources
 HELPERS_PATH_TOOLS = $(HELPERS_PATH_ROOT)/Tools
 
-# TODO auto detection by parsing /proc/cpuinfo
+# How many logical cores the build machine has
 HELPERS_PROCESSORS_COUNT = $(shell cat /proc/cpuinfo | grep processor | wc -l)
 
 # Display a visible green message.
 # @param $(1) The message to display.
 define HelpersDisplayMessage
 	@printf "\033[32m#####################################################################\n"
-	@printf "$(1)\n"
+	@printf "# $(1)\n"
 	@printf "#####################################################################\033[0m\n"
 endef
 
