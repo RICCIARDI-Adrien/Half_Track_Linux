@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Mount file systems
+mount -t proc proc /proc
+mount -t sysfs sys /sys
+
+# Avoid killing init
+while true
+do
+	sh
+done

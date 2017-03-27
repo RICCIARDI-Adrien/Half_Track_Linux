@@ -32,7 +32,7 @@ installer_prepare_rootfs:
 	if [ ! -e $(INSTALLER_PATH_ROOTFS)/dev/zero ]; then sudo mknod -m 666 $(INSTALLER_PATH_ROOTFS)/dev/zero c 1 5; fi
 	
 	@# Populate rootfs with static files
-	#cp -r $(HELPERS_PATH_RESOURCES)/Installer_Rootfs/* $(INSTALLER_PATH_ROOTFS)
+	cp -r $(HELPERS_PATH_RESOURCES)/Installer_Rootfs/* $(INSTALLER_PATH_ROOTFS)
 
 installer_busybox:
 	$(call HelpersDisplayMessage,[Installer] Busybox (base system and utilities))
