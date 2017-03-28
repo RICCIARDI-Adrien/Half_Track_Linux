@@ -1,6 +1,7 @@
 include Tools/Helpers.mk
 
 VERSION_BUSYBOX = busybox-1.26.2
+VERSION_E2FSPROGS = e2fsprogs-1.43.4
 VERSION_LINUX = linux-4.10.5
 VERSION_SYSLINUX = syslinux-6.03
 

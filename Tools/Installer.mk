@@ -5,7 +5,7 @@ INSTALLER_PATH_ISO_IMAGE = $(HELPERS_PATH_BUILD)/Installer_ISO_Image
 INSTALLER_PATH_ROOTFS = $(HELPERS_PATH_BUILD)/Installer_Rootfs
 
 # This makefile entry point
-installer: installer_prepare_rootfs installer_busybox installer_grub installer_prepare_iso_image installer_syslinux installer_linux installer_create_iso_image
+installer: installer_prepare_rootfs installer_busybox installer_grub installer_e2fsprogs installer_prepare_iso_image installer_syslinux installer_linux installer_create_iso_image
 
 # Populate a minimal rootfs just enough to allow following package binaries to be copied on it
 installer_prepare_rootfs:
@@ -49,6 +49,15 @@ installer_grub:
 	cd $(HELPERS_PATH_BUILD)/Installer_GRUB && \
 		./autogen.sh && \
 		LDFLAGS="-static" ./configure --prefix=$(INSTALLER_PATH_ROOTFS) --disable-nls --disable-efiemu --disable-mm-debug --disable-cache-stats --disable-boot-time --disable-grub-emu-sdl --disable-grub-emu-pci --disable-grub-mkfont --disable-grub-themes --disable-device-mapper --disable-libzfs && \
+		make -j $(HELPERS_PROCESSORS_COUNT) && \
+		make install
+
+installer_e2fsprogs:
+	$(call HelpersDisplayMessage,[Installer] e2fsprogs (EXT4 file system utilities))
+	$(call HelpersPrepareArchive,https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v1.43.4/$(VERSION_E2FSPROGS).tar.xz,Installer_E2fsprogs)
+	
+	cd $(HELPERS_PATH_BUILD)/Installer_E2fsprogs && \
+		LDFLAGS="-static" ./configure --prefix=$(INSTALLER_PATH_ROOTFS) --disable-testio-debug --disable-backtrace --disable-debugfs --enable-fsck && \
 		make -j $(HELPERS_PROCESSORS_COUNT) && \
 		make install
 
