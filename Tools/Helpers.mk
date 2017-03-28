@@ -22,7 +22,7 @@ endef
 # Download an archive file and store it in the HELPERS_PATH_DOWNLOADS directory, then uncompress the archive to the build directory.
 # @param $(1) The file downloading URL (including the file name).
 # @param $(2) The directory name the archive file will be extracted to (this directory will be located in the HELPERS_PATH_BUILD directory.
-define HelpersPrepareFile
+define HelpersPrepareArchive
 	$(eval Archive_File_Downloading_URL = $(1))
 	$(eval Archive_File_Name = $(notdir $(1)))
 	$(eval Uncompressed_Directory_Name = $(2))
@@ -38,5 +38,19 @@ define HelpersPrepareFile
 	then \
 		mkdir -p "$(HELPERS_PATH_BUILD)/$(Uncompressed_Directory_Name)"; \
 		tar -xf "$(HELPERS_PATH_DOWNLOADS)/$(Archive_File_Name)" -C "$(HELPERS_PATH_BUILD)/$(Uncompressed_Directory_Name)" --strip 1; \
+	fi
+endef
+
+# Clone a git repository and store it in the HELPERS_PATH_DOWNLOADS directory.
+# @param $(1) The git repository URL.
+# @param $(2) The directory name the repository will be cloned to (this directory will be located in the HELPERS_PATH_BUILD directory.
+define HelpersPrepareGitRepository
+	$(eval Repository_URL = $(1))
+	$(eval Cloned_Directory_Name = $(2))
+	
+	@# Clone the repository only if it is not existing in the build directory
+	if [ ! -e "$(HELPERS_PATH_BUILD)/$(Cloned_Directory_Name)" ]; \
+	then \
+		git clone $(Repository_URL) $(HELPERS_PATH_BUILD)/$(Cloned_Directory_Name); \
 	fi
 endef

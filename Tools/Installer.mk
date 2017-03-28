@@ -5,7 +5,7 @@ INSTALLER_PATH_ISO_IMAGE = $(HELPERS_PATH_BUILD)/Installer_ISO_Image
 INSTALLER_PATH_ROOTFS = $(HELPERS_PATH_BUILD)/Installer_Rootfs
 
 # This makefile entry point
-installer: installer_prepare_rootfs installer_busybox installer_prepare_iso_image installer_syslinux installer_linux installer_create_iso_image
+installer: installer_prepare_rootfs installer_busybox installer_grub installer_prepare_iso_image installer_syslinux installer_linux installer_create_iso_image
 
 # Populate a minimal rootfs just enough to allow following package binaries to be copied on it
 installer_prepare_rootfs:
@@ -36,17 +36,28 @@ installer_prepare_rootfs:
 
 installer_busybox:
 	$(call HelpersDisplayMessage,[Installer] Busybox (base system and utilities))
-	$(call HelpersPrepareFile,https://www.busybox.net/downloads/$(VERSION_BUSYBOX).tar.bz2,Installer_Busybox)
+	$(call HelpersPrepareArchive,https://www.busybox.net/downloads/$(VERSION_BUSYBOX).tar.bz2,Installer_Busybox)
 	
 	cp $(HELPERS_PATH_RESOURCES)/Installer_$(VERSION_BUSYBOX)_config $(HELPERS_PATH_BUILD)/Installer_Busybox/.config
 	cd $(HELPERS_PATH_BUILD)/Installer_Busybox && make -j $(HELPERS_PROCESSORS_COUNT) && make install
+	
+installer_grub:
+	$(call HelpersDisplayMessage,[Installer] GRUB (system bootloader))
+	$(call HelpersPrepareGitRepository,git://git.savannah.gnu.org/grub.git,Installer_GRUB)
+	
+	@# Build and install GRUB to the rootfs
+	cd $(HELPERS_PATH_BUILD)/Installer_GRUB && \
+		./autogen.sh && \
+		LDFLAGS="-static" ./configure --prefix=$(INSTALLER_PATH_ROOTFS) --disable-nls --disable-efiemu --disable-mm-debug --disable-cache-stats --disable-boot-time --disable-grub-emu-sdl --disable-grub-emu-pci --disable-grub-mkfont --disable-grub-themes --disable-device-mapper --disable-libzfs && \
+		make -j $(HELPERS_PROCESSORS_COUNT) && \
+		make install
 
 installer_prepare_iso_image:
 	mkdir -p $(INSTALLER_PATH_ISO_IMAGE)
 
 installer_syslinux:
-	$(call HelpersDisplayMessage,[Installer] SYSLINUX (ISOLINUX CDROM bootloader))
-	$(call HelpersPrepareFile,https://www.kernel.org/pub/linux/utils/boot/syslinux/$(VERSION_SYSLINUX).tar.xz,Installer_Syslinux)
+	$(call HelpersDisplayMessage,[Installer] SYSLINUX (installer bootloader))
+	$(call HelpersPrepareArchive,https://www.kernel.org/pub/linux/utils/boot/syslinux/$(VERSION_SYSLINUX).tar.xz,Installer_Syslinux)
 	
 	@# No need to compile, the isolinux binary is present in the archive, so copy it to the rootfs (refer to http://www.syslinux.org/wiki/index.php?title=ISOLINUX to know what files to copy)
 	mkdir -p $(INSTALLER_PATH_ISO_IMAGE)/isolinux
@@ -56,7 +67,7 @@ installer_syslinux:
 
 installer_linux:
 	$(call HelpersDisplayMessage,[Installer] Linux (kernel))
-	$(call HelpersPrepareFile,https://www.kernel.org/pub/linux/kernel/v4.x/$(VERSION_LINUX).tar.xz,Installer_Linux)
+	$(call HelpersPrepareArchive,https://www.kernel.org/pub/linux/kernel/v4.x/$(VERSION_LINUX).tar.xz,Installer_Linux)
 	
 	@# Set custom kernel configuration
 	cp $(HELPERS_PATH_RESOURCES)/Installer_$(VERSION_LINUX)_config $(HELPERS_PATH_BUILD)/Installer_Linux/.config
