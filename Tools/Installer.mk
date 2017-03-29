@@ -39,7 +39,9 @@ installer_busybox:
 	$(call HelpersPrepareArchive,https://www.busybox.net/downloads/$(VERSION_BUSYBOX).tar.bz2,Installer_Busybox)
 	
 	cp $(HELPERS_PATH_RESOURCES)/Installer_$(VERSION_BUSYBOX)_config $(HELPERS_PATH_BUILD)/Installer_Busybox/.config
-	cd $(HELPERS_PATH_BUILD)/Installer_Busybox && make -j $(HELPERS_PROCESSORS_COUNT) && make install
+	cd $(HELPERS_PATH_BUILD)/Installer_Busybox && \
+		make -j $(HELPERS_PROCESSORS_COUNT) && \
+		make install
 	
 installer_grub:
 	$(call HelpersDisplayMessage,[Installer] GRUB (system bootloader))
@@ -56,10 +58,13 @@ installer_e2fsprogs:
 	$(call HelpersDisplayMessage,[Installer] e2fsprogs (EXT4 file system utilities))
 	$(call HelpersPrepareArchive,https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v1.43.4/$(VERSION_E2FSPROGS).tar.xz,Installer_E2fsprogs)
 	
+	@# Compile the needed programs
 	cd $(HELPERS_PATH_BUILD)/Installer_E2fsprogs && \
-		LDFLAGS="-static" ./configure --prefix=$(INSTALLER_PATH_ROOTFS) --disable-testio-debug --disable-backtrace --disable-debugfs --enable-fsck && \
-		make -j $(HELPERS_PROCESSORS_COUNT) && \
-		make install
+		LDFLAGS="-static" ./configure --disable-testio-debug --disable-backtrace --disable-debugfs && \
+		make -j $(HELPERS_PROCESSORS_COUNT)
+		
+	@# Install only desired programs to avoid wasting too much space on the ISO image
+	cp $(HELPERS_PATH_BUILD)/Installer_E2fsprogs/misc/mke2fs $(INSTALLER_PATH_ROOTFS)/sbin/mkfs.ext4
 
 installer_prepare_iso_image:
 	mkdir -p $(INSTALLER_PATH_ISO_IMAGE)

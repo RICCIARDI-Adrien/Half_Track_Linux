@@ -117,7 +117,7 @@ fi
 
 # Mount the system partition
 mkdir -p /mnt/destination
-mount $Partition_Device /mnt/destination
+mount -t ext4 $Partition_Device /mnt/destination
 
 # Copy the whole system rootfs
 # TODO tar -xf /mnt/source/System.tar.bz2 -C /mnt/destination
