@@ -38,31 +38,41 @@ installer_busybox:
 	$(call HelpersDisplayMessage,[Installer] Busybox (base system and utilities))
 	$(call HelpersPrepareArchive,https://www.busybox.net/downloads/$(VERSION_BUSYBOX).tar.bz2,Installer_Busybox)
 	
-	cp $(HELPERS_PATH_RESOURCES)/Installer_$(VERSION_BUSYBOX)_config $(HELPERS_PATH_BUILD)/Installer_Busybox/.config
-	cd $(HELPERS_PATH_BUILD)/Installer_Busybox && \
-		make -j $(HELPERS_PROCESSORS_COUNT) && \
-		make install
+	$(if $(call HelpersIsPackageBuilt,Installer_Busybox),, \
+		cp $(HELPERS_PATH_RESOURCES)/Installer_$(VERSION_BUSYBOX)_config $(HELPERS_PATH_BUILD)/Installer_Busybox/.config; \
+		cd $(HELPERS_PATH_BUILD)/Installer_Busybox && \
+			make -j $(HELPERS_PROCESSORS_COUNT) \
+	)
+	$(call HelperSetPackageBuiltFlag,Installer_Busybox)
+	
+	cd $(HELPERS_PATH_BUILD)/Installer_Busybox && make install
 	
 installer_grub:
 	$(call HelpersDisplayMessage,[Installer] GRUB (system bootloader))
 	$(call HelpersPrepareGitRepository,git://git.savannah.gnu.org/grub.git,Installer_GRUB)
 	
 	@# Build and install GRUB to the rootfs
-	cd $(HELPERS_PATH_BUILD)/Installer_GRUB && \
-		./autogen.sh && \
-		LDFLAGS="-static" ./configure --prefix=$(INSTALLER_PATH_ROOTFS) --disable-nls --disable-efiemu --disable-mm-debug --disable-cache-stats --disable-boot-time --disable-grub-emu-sdl --disable-grub-emu-pci --disable-grub-mkfont --disable-grub-themes --disable-device-mapper --disable-libzfs && \
-		make -j $(HELPERS_PROCESSORS_COUNT) && \
-		make install
+	$(if $(call HelpersIsPackageBuilt,Installer_GRUB),, \
+		cd $(HELPERS_PATH_BUILD)/Installer_GRUB && \
+			./autogen.sh && \
+			LDFLAGS="-static" ./configure --prefix=$(INSTALLER_PATH_ROOTFS) --disable-nls --disable-efiemu --disable-mm-debug --disable-cache-stats --disable-boot-time --disable-grub-emu-sdl --disable-grub-emu-pci --disable-grub-mkfont --disable-grub-themes --disable-device-mapper --disable-libzfs && \
+			make -j $(HELPERS_PROCESSORS_COUNT) \
+	)
+	$(call HelperSetPackageBuiltFlag,Installer_GRUB)
+	
+	cd $(HELPERS_PATH_BUILD)/Installer_GRUB && make install
 
 installer_e2fsprogs:
 	$(call HelpersDisplayMessage,[Installer] e2fsprogs (EXT4 file system utilities))
 	$(call HelpersPrepareArchive,https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v1.43.4/$(VERSION_E2FSPROGS).tar.xz,Installer_E2fsprogs)
 	
-	@# Compile the needed programs
-	cd $(HELPERS_PATH_BUILD)/Installer_E2fsprogs && \
-		LDFLAGS="-static" ./configure --disable-testio-debug --disable-backtrace --disable-debugfs && \
-		make -j $(HELPERS_PROCESSORS_COUNT)
-		
+	$(if $(call HelpersIsPackageBuilt,Installer_E2fsprogs),, \
+		cd $(HELPERS_PATH_BUILD)/Installer_E2fsprogs && \
+			LDFLAGS="-static" ./configure --disable-testio-debug --disable-backtrace --disable-debugfs && \
+			make -j $(HELPERS_PROCESSORS_COUNT) \
+	)
+	$(call HelperSetPackageBuiltFlag,Installer_E2fsprogs)
+	
 	@# Install only desired programs to avoid wasting too much space on the ISO image
 	cp $(HELPERS_PATH_BUILD)/Installer_E2fsprogs/misc/mke2fs $(INSTALLER_PATH_ROOTFS)/sbin/mkfs.ext4
 

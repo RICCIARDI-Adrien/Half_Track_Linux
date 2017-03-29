@@ -54,3 +54,16 @@ define HelpersPrepareGitRepository
 		git clone $(Repository_URL) $(HELPERS_PATH_BUILD)/$(Cloned_Directory_Name); \
 	fi
 endef
+
+# Check the "package built flag".
+# @param $(1) The package name (not preceded by the full path).
+# @return The "ls" result on stdout if the file exists,
+# @return An empty string if the file does not exist (the error is written on stderr which is redirected to /dev/null).
+# @note Function is under this form to allow its result to be returned.
+HelpersIsPackageBuilt = $(shell ls $(HELPERS_PATH_BUILD)/$(1)/Half_Track_Linux_Package_Built 2> /dev/null)
+
+# Set the "package built flag".
+# @param $(1) The package name (not preceded by the full path).
+define HelperSetPackageBuiltFlag
+	touch $(HELPERS_PATH_BUILD)/$(1)/Half_Track_Linux_Package_Built
+endef
