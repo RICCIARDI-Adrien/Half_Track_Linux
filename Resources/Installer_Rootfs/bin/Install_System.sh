@@ -55,7 +55,7 @@ DisplayMessage "Installation confirmation"
 
 while true
 do
-	read -p "Do you want to proceed for installation (y/n) ? " -n 1 Character
+	read -p "Do you want to proceed with installation (y/n) ? " -n 1 Character
 	echo
 	
 	if [ "$Character" == "y" ]
@@ -92,7 +92,7 @@ do
 		mkfs.ext4 $Partition_Device
 		if [ $? -ne 0 ]
 		then
-			echo -e "\033[31mError : failed to format the partition.\033[0m"
+			echo -e "\033[31mError : failed to format the partition, aborting installation.\033[0m"
 			exit 1
 		fi
 	fi
@@ -111,7 +111,7 @@ mkdir -p /mnt/source
 mount /dev/sr0 /mnt/source
 if [ $? -ne 0 ]
 then
-	echo -e "\033[31mError : failed to mount the CDROM partition. Aborting installation.\033[0m"
+	echo -e "\033[31mError : failed to mount the CDROM partition, aborting installation.\033[0m"
 	exit 1
 fi
 
@@ -128,7 +128,27 @@ mount -t ext4 $Partition_Device /mnt/destination
 # Install system bootloader
 #--------------------------------------------------------------------------------------------------
 DisplayMessage "Installing GRUB"
-sbin/grub-install -d /lib/grub/i386-pc --boot-directory=/mnt/destination/boot $Partition_Device
+
+while true
+do
+	read -p "Do you want to install the GRUB bootloader (y/n) ? " -n 1 Character
+	echo
+	
+	if [ "$Character" == "y" ]
+	then
+		read -p "Enter hard disk device path (for example, /dev/sda) : " Hard_Disk_Device
+	
+		echo "Installing GRUB..."
+		grub-install -d /lib/grub/i386-pc --boot-directory=/mnt/destination/boot $Hard_Disk_Device
+		if [ $? -ne 0 ]
+		then
+			echo -e "\033[31mError : failed to install GRUB, aborting installation.\033[0m"
+			exit 1
+		fi
+	fi
+	break
+done
+
 # TODO
 #--------------------------------------------------------------------------------------------------
 # 
