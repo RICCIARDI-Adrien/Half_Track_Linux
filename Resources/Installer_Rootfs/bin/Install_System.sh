@@ -158,6 +158,8 @@ done
 #--------------------------------------------------------------------------------------------------
 # Reboot system
 #--------------------------------------------------------------------------------------------------
+DisplayMessage "Installation terminated"
+
 sync
 umount /mnt/source
 umount /mnt/destination
@@ -165,4 +167,10 @@ umount /mnt/destination
 echo "Remove the installation medium and hit enter to reboot."
 read
 
-reboot
+# Manually trigger a reboot as the busybox reboot is not working, because busybox init is not used
+# Synchronize file systems
+echo s > /proc/sysrq-trigger
+# Unmount file systems
+echo u > /proc/sysrq-trigger
+# Reboot
+echo b > /proc/sysrq-trigger
