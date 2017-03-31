@@ -19,6 +19,8 @@ do
 	echo "4. Italian"
 	echo "5. Spanish"
 	
+	# TODO create keyboard init script to automatically set the mapping on system boot
+	
 	# Get a single character
 	read -n 1 Character
 	case $Character in
@@ -119,8 +121,8 @@ fi
 mkdir -p /mnt/destination
 mount -t ext4 $Partition_Device /mnt/destination
 
-# Copy the whole system rootfs
-# TODO tar -xf /mnt/source/System.tar.bz2 -C /mnt/destination
+# Copy the whole system rootfs (don't forget that the source file system is ISO9660, so the archive name is modified due to the file system limitations)
+tar -xf /mnt/source/system_rootfs_tar.bz2 -C /mnt/destination --strip 1
 
 # TODO copy fstab
 

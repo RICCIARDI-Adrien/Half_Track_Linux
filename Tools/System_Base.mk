@@ -10,6 +10,7 @@ system_base_prepare_rootfs:
 	mkdir -p $(SYSTEM_BASE_PATH_ROOTFS)/bin
 	mkdir -p $(SYSTEM_BASE_PATH_ROOTFS)/boot
 	mkdir -p $(SYSTEM_BASE_PATH_ROOTFS)/dev
+	mkdir -p $(SYSTEM_BASE_PATH_ROOTFS)/mnt
 	mkdir -p $(SYSTEM_BASE_PATH_ROOTFS)/proc
 	mkdir -p $(SYSTEM_BASE_PATH_ROOTFS)/usr/bin
 	mkdir -p $(SYSTEM_BASE_PATH_ROOTFS)/sys

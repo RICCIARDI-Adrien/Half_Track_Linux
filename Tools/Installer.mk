@@ -11,6 +11,7 @@ installer: installer_prepare_rootfs installer_busybox installer_grub installer_e
 installer_prepare_rootfs:
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/bin
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/dev
+	mkdir -p $(INSTALLER_PATH_ROOTFS)/mnt
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/proc
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/usr/bin
 	mkdir -p $(INSTALLER_PATH_ROOTFS)/sys
@@ -78,6 +79,8 @@ installer_e2fsprogs:
 
 installer_prepare_iso_image:
 	mkdir -p $(INSTALLER_PATH_ISO_IMAGE)
+	@# Embed the compressed system rootfs
+	mv $(HELPERS_PATH_BUILD)/System_Rootfs.tar.bz2 $(INSTALLER_PATH_ISO_IMAGE)
 
 installer_syslinux:
 	$(call HelpersDisplayMessage,[Installer] SYSLINUX (installer bootloader))
@@ -102,4 +105,4 @@ installer_linux:
 
 installer_create_iso_image:
 	$(call HelpersDisplayMessage,[Installer] Create CDROM ISO image)
-	mkisofs -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o Half_Track_Linux.iso $(INSTALLER_PATH_ISO_IMAGE)
+	mkisofs -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -iso-level 3 -o Half_Track_Linux.iso $(INSTALLER_PATH_ISO_IMAGE)
