@@ -3,7 +3,7 @@
 
 SYSTEM_BASE_PATH_ROOTFS = $(HELPERS_PATH_BUILD)/System_Rootfs
 
-system_base: system_base_prepare_rootfs system_base_linux
+system_base: system_base_prepare_rootfs system_base_linux system_base_create_rootfs
 
 # Populate a minimal rootfs just enough to allow following package binaries to be copied on it
 system_base_prepare_rootfs:
@@ -47,3 +47,8 @@ system_base_linux:
 	cp $(HELPERS_PATH_BUILD)/System_Linux/arch/x86/boot/bzImage $(SYSTEM_BASE_PATH_ROOTFS)/boot/vmlinux
 	@# Install modules to rootfs
 	cd $(HELPERS_PATH_BUILD)/System_Linux && INSTALL_MOD_PATH=$(SYSTEM_BASE_PATH_ROOTFS) make modules_install
+
+# Compress the rootfs to an archive that will be embedded on the installer ISO image
+system_base_create_rootfs:
+	$(call HelpersDisplayMessage,[System] Compressing rootfs)
+	cd $(HELPERS_PATH_BUILD) && tar -jc System_Rootfs -f $(HELPERS_PATH_BUILD)/System_Rootfs.tar.bz2
