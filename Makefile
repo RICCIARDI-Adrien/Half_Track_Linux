@@ -5,11 +5,11 @@ VERSION_E2FSPROGS = e2fsprogs-1.43.4
 VERSION_LINUX = linux-4.10.5
 VERSION_SYSLINUX = syslinux-6.03
 
-#all: linux installer
-all: prepare_build_environment installer
+all: prepare_build_environment system_base installer
 
-# Include installer rules after the "all" rule to make "all" the default rule
+# Include rules after the "all" rule to make "all" the default rule
 include Tools/Installer.mk
+include Tools/System_Base.mk
 
 # Set up all needed directories
 prepare_build_environment:
@@ -23,16 +23,3 @@ clean:
 # Same as "clean" rule but also remove downloaded archives
 distclean: clean
 	rm -rf $(HELPERS_PATH_DOWNLOADS)/*
-
-#rootfs: initramfs ?
-#	mkdir $(HELPERS_PATH_BUILD)/
-
-linux:
-	$(call HelpersDisplayMessage,Compiling Linux)
-
-	$(call HelpersPrepareFile,https://www.kernel.org/pub/linux/kernel/v4.x/$(VERSION_LINUX).tar.xz,$(VERSION_LINUX))
-	@# Set custom kernel configuration
-	cp $(HELPERS_PATH_RESOURCES)/$(VERSION_LINUX)_config $(HELPERS_PATH_BUILD)/$(VERSION_LINUX)/.config
-	cd $(HELPERS_PATH_BUILD)/$(VERSION_LINUX) && make -j $(HELPERS_PROCESSORS_COUNT)
-	# TODO get generated binary
-	
