@@ -50,13 +50,13 @@ installer_busybox:
 	
 installer_grub:
 	$(call HelpersDisplayMessage,[Installer] GRUB (system bootloader))
-	$(call HelpersPrepareGitRepository,git://git.savannah.gnu.org/grub.git,Installer_GRUB)
+	$(call HelpersPrepareArchive,ftp://ftp.gnu.org/gnu/grub/$(VERSION_GRUB).tar.xz,Installer_GRUB)
 	
 	@# Build and install GRUB to the rootfs
 	$(if $(call HelpersIsPackageBuilt,Installer_GRUB),, \
 		cd $(HELPERS_PATH_BUILD)/Installer_GRUB && \
 			./autogen.sh && \
-			LDFLAGS="-static" ./configure --prefix=$(INSTALLER_PATH_ROOTFS) --disable-nls --disable-efiemu --disable-mm-debug --disable-cache-stats --disable-boot-time --disable-grub-emu-sdl --disable-grub-emu-pci --disable-grub-mkfont --disable-grub-themes --disable-device-mapper --disable-libzfs && \
+			LDFLAGS="-static" ./configure --disable-nls --disable-efiemu --disable-mm-debug --disable-cache-stats --disable-boot-time --disable-grub-emu-sdl --disable-grub-emu-pci --disable-grub-mkfont --disable-grub-themes --disable-device-mapper --disable-libzfs && \
 			make -j $(HELPERS_PROCESSORS_COUNT) \
 	)
 	$(call HelperSetPackageBuiltFlag,Installer_GRUB)
