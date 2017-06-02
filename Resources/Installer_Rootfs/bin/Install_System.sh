@@ -147,6 +147,15 @@ do
 			echo -e "\033[31mError : failed to install GRUB, aborting installation.\033[0m"
 			exit 1
 		fi
+		
+		# TODO hd0 and msdos1 must be guessed from /dev/sd<x><y>
+		echo "Generating GRUB configuration file..."
+		echo "set timeout=2" > /mnt/destination/boot/grub/grub.cfg
+		echo "" >> /mnt/destination/boot/grub/grub.cfg
+		echo "menuentry 'Half-track Linux' {" >> /mnt/destination/boot/grub/grub.cfg
+		echo "	set root='hd0,msdos1'" >> /mnt/destination/boot/grub/grub.cfg
+		echo "	linux /boot/vmlinux root=$Partition_Device">> /mnt/destination/boot/grub/grub.cfg
+		echo "}" >> /mnt/destination/boot/grub/grub.cfg
 	fi
 	break
 done
