@@ -3,7 +3,7 @@
 
 SYSTEM_BASE_PATH_ROOTFS = $(HELPERS_PATH_BUILD)/System_Rootfs
 
-system_base: system_base_prepare_rootfs system_base_linux system_base_create_rootfs
+system_base: system_base_prepare_rootfs system_base_linux system_base_busybox system_base_create_rootfs
 
 # Populate a minimal rootfs just enough to allow following package binaries to be copied on it
 system_base_prepare_rootfs:
@@ -48,6 +48,19 @@ system_base_linux:
 	cp $(HELPERS_PATH_BUILD)/System_Linux/arch/x86/boot/bzImage $(SYSTEM_BASE_PATH_ROOTFS)/boot/vmlinux
 	@# Install modules to rootfs
 	cd $(HELPERS_PATH_BUILD)/System_Linux && INSTALL_MOD_PATH=$(SYSTEM_BASE_PATH_ROOTFS) make modules_install
+	
+system_base_busybox:
+	$(call HelpersDisplayMessage,[System] Busybox (base system and utilities))
+	$(call HelpersPrepareArchive,https://www.busybox.net/downloads/$(VERSION_BUSYBOX).tar.bz2,System_Busybox)
+	
+	$(if $(call HelpersIsPackageBuilt,System_Busybox),, \
+		cp $(HELPERS_PATH_RESOURCES)/System_$(VERSION_BUSYBOX)_config $(HELPERS_PATH_BUILD)/System_Busybox/.config; \
+		cd $(HELPERS_PATH_BUILD)/System_Busybox && \
+			make -j $(HELPERS_PROCESSORS_COUNT) \
+	)
+	$(call HelperSetPackageBuiltFlag,System_Busybox)
+	
+	cd $(HELPERS_PATH_BUILD)/System_Busybox && make install
 
 # Compress the rootfs to an archive that will be embedded on the installer ISO image
 system_base_create_rootfs:
