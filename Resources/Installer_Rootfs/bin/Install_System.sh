@@ -7,6 +7,49 @@ DisplayMessage()
 	echo -e "+--------------------------------------------------------------------\033[0m"
 }
 
+# Convert a Linux partition naming (like /dev/sda1) to GRUB format (hd0,msdos1)
+ConvertLinuxPartitionNameToGRUB()
+{
+	GRUB_Partition_Name=msdos$(echo -n $1 | cut -c 9)
+
+	case $(echo -n $1 | cut -c 8) in
+		a)
+			GRUB_Hard_Disk_Name="hd0"
+			;;
+		b)
+			GRUB_Hard_Disk_Name="hd1"
+			;;
+		c)
+			GRUB_Hard_Disk_Name="hd2"
+			;;
+		d)
+			GRUB_Hard_Disk_Name="hd3"
+			;;
+		e)
+			GRUB_Hard_Disk_Name="hd4"
+			;;
+		f)
+			GRUB_Hard_Disk_Name="hd5"
+			;;
+		g)
+			GRUB_Hard_Disk_Name="hd6"
+			;;
+		h)
+			GRUB_Hard_Disk_Name="hd7"
+			;;
+		i)
+			GRUB_Hard_Disk_Name="hd8"
+			;;
+		j)
+			GRUB_Hard_Disk_Name="hd9"
+			;;
+		# Do not handle more disks because they are present in only few configurations
+		*)
+			GRUB_Hard_Disk_Name="Unknown hard disk"
+			;;
+	esac
+}
+
 #--------------------------------------------------------------------------------------------------
 # Ask for keyboard mapping
 #--------------------------------------------------------------------------------------------------
@@ -148,12 +191,12 @@ do
 			exit 1
 		fi
 		
-		# TODO hd0 and msdos1 must be guessed from /dev/sd<x><y>
+		ConvertLinuxPartitionNameToGRUB $Partition_Device
 		echo "Generating GRUB configuration file..."
 		echo "set timeout=2" > /mnt/destination/boot/grub/grub.cfg
 		echo "" >> /mnt/destination/boot/grub/grub.cfg
 		echo "menuentry 'Half-track Linux' {" >> /mnt/destination/boot/grub/grub.cfg
-		echo "	set root='hd0,msdos1'" >> /mnt/destination/boot/grub/grub.cfg
+		echo "	set root='$GRUB_Hard_Disk_Name,$GRUB_Partition_Name'" >> /mnt/destination/boot/grub/grub.cfg
 		echo "	linux /boot/vmlinux root=$Partition_Device">> /mnt/destination/boot/grub/grub.cfg
 		echo "}" >> /mnt/destination/boot/grub/grub.cfg
 	fi
