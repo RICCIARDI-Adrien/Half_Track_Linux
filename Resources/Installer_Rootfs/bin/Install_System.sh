@@ -10,7 +10,7 @@ DisplayMessage()
 # Convert a Linux partition naming (like /dev/sda1) to GRUB format (hd0,msdos1)
 ConvertLinuxPartitionNameToGRUB()
 {
-	GRUB_Partition_Name=msdos$(echo -n $1 | cut -c 9)
+	GRUB_Partition_Name=msdos$(echo $1 | cut -c 9)
 
 	case $(echo -n $1 | cut -c 8) in
 		a)
@@ -181,9 +181,10 @@ do
 	
 	if [ "$Character" == "y" ]
 	then
-		read -p "Enter hard disk device path (for example, /dev/sda) : " Hard_Disk_Device
+		# Remove partition number to get the hard disk device
+		Hard_Disk_Device=$(echo $Partition_Device | cut -c -8)
 	
-		echo "Installing GRUB..."
+		echo "Installing GRUB on $Hard_Disk_Device..."
 		grub-install -d /lib/grub/i386-pc --boot-directory=/mnt/destination/boot $Hard_Disk_Device
 		if [ $? -ne 0 ]
 		then
@@ -199,8 +200,13 @@ do
 		echo "	set root='$GRUB_Hard_Disk_Name,$GRUB_Partition_Name'" >> /mnt/destination/boot/grub/grub.cfg
 		echo "	linux /boot/vmlinux root=$Partition_Device">> /mnt/destination/boot/grub/grub.cfg
 		echo "}" >> /mnt/destination/boot/grub/grub.cfg
+		break
 	fi
-	break
+	
+	if [ "$Character" == "n" ]
+	then
+		break
+	fi
 done
 
 # TODO
